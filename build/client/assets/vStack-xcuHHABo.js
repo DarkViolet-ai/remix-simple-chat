@@ -1,0 +1,1 @@
+import{R as x,j as f}from"./jsx-runtime-BfF-YriY.js";const a=x.forwardRef(({children:t,gap:e="gap-2",className:s="",style:c={},align:r="items-center",onClick:o},m)=>f.jsx("div",{onClick:o,className:`flex flex-col ${r} ${e} ${s}`,ref:m,style:c,children:t}));a.displayName="VStack";const l=a;export{l as V};

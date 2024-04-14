@@ -1,0 +1,1 @@
+import{j as o}from"./jsx-runtime-BfF-YriY.js";import{V as t}from"./vStackFull-BVjnb3Lo.js";import"./vStack-xcuHHABo.js";function s(){return o.jsx(t,{className:"h-full p-[2vh] bg-col-600 overflow-y-auto",children:"This"})}export{s as default};

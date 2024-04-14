@@ -1,0 +1,1 @@
+import{R as l,j as m}from"./jsx-runtime-BfF-YriY.js";const e=l.forwardRef(({children:s,style:a,onClick:r,className:t="",id:x},o)=>m.jsx("div",{ref:o,id:x,className:`flex ${t}`,style:a,onClick:r,children:s}));e.displayName="Flex";const f=e;export{f as F};

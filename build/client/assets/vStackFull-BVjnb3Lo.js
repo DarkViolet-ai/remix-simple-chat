@@ -1,0 +1,1 @@
+import{j as o}from"./jsx-runtime-BfF-YriY.js";import{V as c}from"./vStack-xcuHHABo.js";function n({children:t,className:r,gap:s,onClick:a,style:e={},align:m="items-center"}){return o.jsx(c,{className:`w-full ${s} ${r}`,onClick:a,style:e,align:m,children:t})}export{n as V};

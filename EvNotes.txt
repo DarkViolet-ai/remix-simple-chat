@@ -1,0 +1,4 @@
+February 14, 2024
+
+- Finish cleaning up styles and adding to config
+- Check all components that will have issues after changes

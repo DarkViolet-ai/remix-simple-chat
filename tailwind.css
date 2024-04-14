@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 0.7vh;
+  font-size: 1.7vh;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+svg {
+  border-radius: none;
+}
+
+ol {
+  padding: 1rem;
+}
+
+ol li {
+  padding: 0.5rem;
+}
+
+/* SLIDE TRANSITIONS */
+.slide-right-enter {
+  transform: translateX(100%);
+}
+
+.slide-right-enter-active {
+  transform: translateX(0%);
+  transition: transform 300ms;
+}
+
+.slide-left-enter {
+  transform: translateX(-100%);
+}
+
+.slide-left-enter-active {
+  transform: translateX(0%);
+  transition: transform 300ms;
+}
+
+.slide-top-enter {
+  transform: translateY(-100%);
+}
+
+.slide-top-enter-active {
+  transform: translateY(0%);
+  transition: transform 300ms;
+}
+
+.slide-bottom-enter {
+  transform: translateY(100%);
+}
+
+.slide-bottom-enter-active {
+  transform: translateY(0%);
+  transition: transform 300ms;
+}
+
+/* Slide out to right */
+.slide-right-exit {
+  transform: translateX(0%);
+}
+.slide-right-exit-active {
+  transform: translateX(100%);
+  transition: transform 800ms;
+}
+
+/* Slide out to left */
+.slide-left-exit {
+  transform: translateX(0%);
+}
+.slide-left-exit-active {
+  transform: translateX(-100%);
+  transition: transform 300ms;
+}
+
+/* Gradient */
+
+.gradient-one {
+  background: linear-gradient(
+      45deg,
+      rgba(70, 1, 100, 0.25),
+      rgba(0, 99, 99, 0.25)
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(119, 149, 242, 0.25),
+      rgba(148, 0, 211, 0.25)
+    );
+}
+
+.story-card-hover:hover {
+  transform: scale(1.02);
+  transition: transform 0.5s ease-in-out;
+}
+
+/* In your global CSS file */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Animated Outline Classes */
+
+@keyframes pulsate {
+  0%,
+  100% {
+    background-size: 200% 200%;
+  }
+  50% {
+    background-size: 100% 100%;
+  }
+}
+.animate-pulsate {
+  animation: pulsate 3s ease-out infinite;
+}
+
+@keyframes colorFillToLeft {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.animate-colorFillToLeft {
+  animation: colorFillToLeft 3s linear infinite;
+}
+
+@keyframes alternateCorners {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.animate-alternateCorners {
+  animation: borderClockwise 4s linear infinite;
+}
+
+@keyframes cometClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  33% {
+    transform: rotate(120deg);
+  }
+  66% {
+    transform: rotate(210deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cometCounterClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  33% {
+    transform: rotate(-120deg);
+  }
+  66% {
+    transform: rotate(-210deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-cometClockwise {
+  animation: cometClockwise 8s infinite linear;
+}
+
+.animate-cometCounterClockwise {
+  animation: cometCounterClockwise 8s infinite linear;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+.rotate90 {
+  transform: rotate(90deg);
+  transform-origin: left bottom;
+  white-space: nowrap;
+}
+
+.bold-text-shadow-darkBlue {
+  text-shadow: 0.75px 0 rgb(2, 48, 89),
+    /* Right shadow */ 0 0.75px rgb(2, 48, 89),
+    /* Bottom shadow */ 0.75px 0.75px rgb(2, 48, 89),
+    /* Bottom-right shadow */ -0.75px 0 rgb(2, 48, 89),
+    /* Left shadow */ 0 -0.75px rgb(2, 48, 89),
+    /* Top shadow */ 2px 2px 7px rgba(255, 255, 255, 1); /* White glow */
+  color: transparent;
+}
+
+.bolder-text-shadow-darkBlue {
+  text-shadow: 1px 0 rgb(2, 48, 89), /* Right shadow */ 0 1px rgb(2, 48, 89),
+    /* Bottom shadow */ 1px 1px rgb(2, 48, 89),
+    /* Bottom-right shadow */ -1px 0 rgb(2, 48, 89),
+    /* Left shadow */ 0 -1px rgb(2, 48, 89),
+    /* Top shadow */ 4px 4px 10px rgba(255, 255, 255, 1); /* White glow */
+  color: transparent;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.5vh;
+  height: 1.5vh;
+  border-radius: 0.75vh;
+  background: rgb(167, 189, 217);
+  cursor: pointer;
+  box-shadow: 0.2vh 0.2vh 0.2vh rgba(0, 0, 0, 0.8);
+}
+
+.slider::-moz-range-thumb {
+  width: 1.5vh;
+  height: 1.5vh;
+  border-radius: 0.75vh;
+  background: rgb(167, 189, 217);
+  cursor: pointer;
+  box-shadow: 0.2vh 0.2vh 0.2vh rgba(0, 0, 0, 0.8);
+}
+
+input[type="color"] {
+  border: 2px solid transparent;
+  border-radius: 0.7vh;
+  width: 4vh; /* Custom width */
+  height: 4vh; /* Custom height */
+  -webkit-appearance: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 5px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}

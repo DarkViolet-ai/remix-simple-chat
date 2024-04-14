@@ -1,0 +1,1 @@
+import{R as c,j as d}from"./jsx-runtime-BfF-YriY.js";const o=c.forwardRef(({children:s,onClick:t,onKeyDown:a,style:e={},className:r="",onMouseEnter:x,onMouseLeave:n},m)=>d.jsx("div",{role:"button",tabIndex:0,className:` ${r}`,style:{...e},onClick:t,onKeyDown:a,onMouseEnter:x,onMouseLeave:n,ref:m,children:s}));o.displayName="Box";const l=o;export{l as B};

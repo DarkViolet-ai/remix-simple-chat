@@ -1,0 +1,8 @@
+npx create-remix@latest --template remix-run/remix/templates/unstable-vite
+npm i remix-flat-routes
+npm install -D tailwindcss postcss autoprefixer
+npm install react-icons --save
+npm i framer-motion
+
+- Make sure not to use Remix Links to import tailwind css, instead import the file in the head of the document.
+- Make sure to properly set up postcss.config.js and tailwind.config.js
