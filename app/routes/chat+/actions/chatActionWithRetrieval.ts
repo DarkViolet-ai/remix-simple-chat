@@ -23,16 +23,21 @@ import { darkVioletRetrieval } from "~/lib/server-utils/darkVioletRetrieval.serv
 export const chatAction = async ({ request }: ActionFunctionArgs) => {
   const sessionId = (await getSessionIdFromRequest(request)) || uuid();
   console.log("session id", sessionId);
+
+  // you can use the OpenAI, TogetherAI or DeepInfra models.  Just copy and
+  // paste the name of the model you want to use below.  A number of examples are shown.
+  // const chatModel = new ChatOpenAI({
+  // const chatModel = new ChatTogetherAI({
   const chatModel = new ChatDeepInfra({
-    //modelName: "Gryphe/MythoMax-L2-13b",
+    //modelName: "Gryphe/MythoMax-L2-13b", // deepinfra
     temperature: 1.0,
-    //modelName: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
-    //modelName: "snorkelai/Snorkel-Mistral-PairRM-DPO",
-    //modelName: "Qwen/Qwen1.5-72B-Chat",
-    //modelName: "upstage/SOLAR-10.7B-Instruct-v1.0",
-    //modelName: "DeepInfra/pygmalion-13b-4bit-128g",
-    //modelName: "lizpreciatior/lzlv_70b_fp16_hf",
-    modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b",
+    //modelName: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO", // together
+    //modelName: "snorkelai/Snorkel-Mistral-PairRM-DPO", // together
+    //modelName: "Qwen/Qwen1.5-72B-Chat", // together
+    //modelName: "upstage/SOLAR-10.7B-Instruct-v1.0", //together
+    //modelName: "DeepInfra/pygmalion-13b-4bit-128g", // deepinfra
+    //modelName: "lizpreciatior/lzlv_70b_fp16_hf", // deepinfra
+    modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b", // deepinfra
   });
 
   const prompt = ChatPromptTemplate.fromMessages([
@@ -44,7 +49,6 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
       Following this is additional information to help you with the user's latest input, if any.  You can use this information to help you respond to the user's latest input in a way that is consistent with your character and the conversation. This is Followed by your chat history with the user.`,
     ],
     ["system", "{retrieval}"],
-    //new MessagesPlaceholder("retrieval"),
     new MessagesPlaceholder("chat"),
   ]);
   const messageHistory = new RedisChatMessageHistory({
@@ -52,26 +56,30 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
     client: redis,
     url: process.env.REDIS_URL,
   });
+
   const formData = await request.formData();
   const chatInput = formData.get("chatInput");
+
   console.log("received chat input", chatInput);
+
   const retrievalData = await darkVioletRetrieval(chatInput as string);
   const retrievalString = retrievalData
     .map((entry) => `question:${entry.question}\n answer:${entry.answer}`)
     .join("\n");
+
   console.log("retrieval string", retrievalString);
+
   const chatMessage = new HumanMessage(chatInput as string, {
     timestamp: new Date().toISOString(),
   });
+
   const outputParser = new StringOutputParser();
   await messageHistory.addMessage(chatMessage);
   const messages = await messageHistory.getMessages();
-  console.log("message history", messages);
+
   const response = await prompt
     .pipe(chatModel)
     .pipe(outputParser)
-    //.invoke({ chat: messages });
-    //.invoke({ chat: messages, retrieval: [new AIMessage(retrievalString)] });
     .invoke({ chat: messages, retrieval: retrievalString });
 
   await messageHistory.addMessage(
