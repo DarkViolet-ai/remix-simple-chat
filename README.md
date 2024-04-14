@@ -1,22 +1,25 @@
-# Remix-Vite-Tailwind Template with Flat Routes
+# A simple chat demo app
 
-Welcome to the ultimate starting point for your web development projects: A comprehensive template designed to integrate Remix, Vite, and Tailwind CSS with a focus on flat routes and an extensive Tailwind configuration for seamless design flexibility.
-
-[Visit the deployed version](https://remix-template.darkviolet.ai)
-
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind10.png)
+This is a simple chat demo app built with remix, langchain, and redis.
+This utilizes the remix template from https://github.com/EvanMarie/blank_remix_tailwind_template
 
 ## Features
 
-- **Remix with Flat Routes**: Use the full power of Remix, enhanced with flat route structure for simplified routing.
-- **Vite Integration**: Enjoy fast development and build times with Vite, configured to work seamlessly with Remix and Tailwind CSS.
+User navigates to chat and begins chatting with a bot of your choosing. This project shows how to use DeepInfra, TogetherAI, or OpenAI as the chat llm provider.
 
-- **Enhanced Tailwind Configuration**: Elevate your design with our advanced Tailwind setup, which transcends standard offerings to provide an extensive palette of color and background combinations. Tailor the color scheme effortlessly to align with your brand identity or specific design aspirations. By integrating your unique color selections, you unlock access to the comprehensive "design" route, showcasing a plethora of template examples. This feature becomes an indispensable asset during the development process, offering immediate visual feedback and inspiration.
-- **Streamlined Design Utilities**: Benefit from a wealth of design utilities for shadows, text shadows, text sizes, and more, enabling you to craft beautiful interfaces without the hassle.
-- **Component Library**: A vast array of components, inspired by Chakra UI but extending further with more extensive options. Includes essential building blocks like Flex, FlexFull, VStack, VStackFull, HStack, HStackFull, Wrap, and more. These make it easy to visualize your design just by looking at your code.
-- **Easy Color Scheme Customization**: Change the entire color scheme of your application by simply adjusting the Tailwind config. Perfect for branding and theme adjustments.
+There is a simple exmple at the route /chat that shows how to use the chatbot.
 
-## Getting Started
+There is a slightly more complex example at the route /chat/with-terms-and-retrieval that shows how to use a chatbot that implements a user terms of service and a retrieval based chatbot.
+
+You will need to define the following environment variables in a .env file in the root of the project:
+
+```bash
+REDIS_URL # a redis url, e.g. redis://localhost:6379
+DEEP_INFRA_API_KEY # from https://deepinfra.com
+TOGETHER_AI_API_KEY # from https://www.together.ai
+COOKIE_SECRET # a random string
+PINECONE_API_KEY # from https://www.pinecone.io
+```
 
 ### Prerequisites
 
@@ -49,42 +52,3 @@ yarn dev
 ```
 
 Your project should now be running on [http://localhost:3000](http://localhost:3000).
-
-## Customization
-
-### Tailwind Configuration
-
-Navigate to the `tailwind.config.js` file to customize the color schemes, design utilities, and more. This file has been extensively extended to provide a comprehensive set of utilities for your design needs.
-
-### Components
-
-Explore the `components` directory to see the available UI components. You can use these as is or customize them further to match your project requirements.
-
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind1.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind2.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind3.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind4.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind5.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind6.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind7.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind8.png)
-![image1](http://www.evanmarie.com/content/files/images/remix-vite-tailwind9.png)
-
-## Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Acknowledgments
-
-- Remix Team for the incredible framework.
-- Tailwind CSS for the powerful utility-first CSS framework.
-- Vite for the blazing fast build tool.
-- Chakra UI for the inspiration behind our component library.
-
-Start building your next project with ease using this Remix-Vite-Tailwind template, where design and development efficiency meets scalability.

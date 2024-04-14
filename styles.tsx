@@ -9,6 +9,7 @@ import {
   FaEye,
   FaEyeSlash,
   FaPlusSquare,
+  FaRegArrowAltCircleUp,
   FaRegSave,
   FaSearch,
   FaStopCircle,
@@ -16,9 +17,14 @@ import {
 import { FaArrowTurnUp } from "react-icons/fa6";
 import { GiAlarmClock, GiPodiumWinner } from "react-icons/gi";
 import { GrGroup } from "react-icons/gr";
-import { HiOutlineUserAdd, HiOutlineUserRemove } from "react-icons/hi";
+import {
+  HiOutlineUserAdd,
+  HiOutlineUserRemove,
+  HiRefresh,
+} from "react-icons/hi";
 import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 import {
+  IoCheckboxOutline,
   IoChevronDownCircleOutline,
   IoChevronUpCircleOutline,
   IoCloseCircleOutline,
@@ -118,3 +124,6 @@ export const StopIcon = FaStopCircle;
 export const HideIcon = FaEyeSlash;
 export const CodeIcon = FaCode;
 export const RefreshIcon = LuRefreshCw;
+export const CircleArrowUp = FaRegArrowAltCircleUp;
+export const BoxCheckedIcon = IoCheckboxOutline;
+export const BoxUncheckedIcon = ImCheckboxUnchecked;
