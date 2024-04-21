@@ -30,14 +30,17 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
   // const chatModel = new ChatTogetherAI({
   const chatModel = new ChatDeepInfra({
     //modelName: "Gryphe/MythoMax-L2-13b", // deepinfra
-    temperature: 1.0,
+    //modelName: "gpt-4-turbo-preview", // openai
+    temperature: 0.8,
     //modelName: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO", // together
     //modelName: "snorkelai/Snorkel-Mistral-PairRM-DPO", // together
     //modelName: "Qwen/Qwen1.5-72B-Chat", // together
     //modelName: "upstage/SOLAR-10.7B-Instruct-v1.0", //together
     //modelName: "DeepInfra/pygmalion-13b-4bit-128g", // deepinfra
     //modelName: "lizpreciatior/lzlv_70b_fp16_hf", // deepinfra
-    modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b", // deepinfra
+    //modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b", // deepinfra
+    //modelName: "meta-llama/Meta-Llama-3-8B-Instruct", // deepinfra
+    modelName: "meta-llama/Meta-Llama-3-70B-Instruct", // deepinfra,
   });
 
   const prompt = ChatPromptTemplate.fromMessages([

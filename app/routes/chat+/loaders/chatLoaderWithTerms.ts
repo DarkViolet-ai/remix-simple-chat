@@ -35,7 +35,7 @@ const getAcceptedTerms = async (sessionId: string) => {
 export const chatLoader = async ({ request }: LoaderFunctionArgs) => {
   const searchParams = new URLSearchParams(request.url.split("?")[1]);
   const clearHistory = searchParams.get("clearHistory");
-  const acceptTerms = searchParams.get("acceptTerms");
+
   console.log("clear history", clearHistory);
   // clear history by changing the session id, keeps the chat in database, but
   // clears it for user.
@@ -43,9 +43,10 @@ export const chatLoader = async ({ request }: LoaderFunctionArgs) => {
     ? (await getSessionIdFromRequest(request)) || uuid()
     : uuid();
   if (clearHistory) {
-    const response = redirect("/home#chat");
+    const response = redirect("/chat/with-terms-and-retrieval");
     return await setSessionIdOnResponse(response, sessionId);
   }
+  const acceptTerms = searchParams.get("acceptTerms");
   if (acceptTerms) {
     console.log("accept terms", acceptTerms);
     if (acceptTerms === "true") await setAcceptedTerms(sessionId);
