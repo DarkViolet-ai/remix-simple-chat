@@ -40,7 +40,8 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
     //modelName: "lizpreciatior/lzlv_70b_fp16_hf", // deepinfra
     //modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b", // deepinfra
     //modelName: "meta-llama/Meta-Llama-3-8B-Instruct", // deepinfra
-    modelName: "meta-llama/Meta-Llama-3-70B-Instruct", // deepinfra,
+    //modelName: "meta-llama/Meta-Llama-3-70B-Instruct", // deepinfra,
+    modelName: "HuggingFaceH4/zephyr-orpo-141b-A35b-v0.1", // deepinfra,
   });
 
   const prompt = ChatPromptTemplate.fromMessages([
@@ -55,7 +56,7 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
     new MessagesPlaceholder("chat"),
   ]);
   const messageHistory = new RedisChatMessageHistory({
-    sessionId: `dv-chat:${sessionId}`,
+    sessionId: `simple-chat:${sessionId}`,
     client: redis,
     url: process.env.REDIS_URL,
   });

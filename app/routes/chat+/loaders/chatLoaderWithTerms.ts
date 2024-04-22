@@ -59,7 +59,7 @@ export const chatLoader = async ({ request }: LoaderFunctionArgs) => {
   console.log("session id", sessionId);
   console.log("accepted terms", acceptedTerms);
   const messageHistory = new RedisChatMessageHistory({
-    sessionId: `dv-chat:${sessionId}`,
+    sessionId: `simple-chat:${sessionId}`,
     client: redis,
     url: process.env.REDIS_URL,
   });

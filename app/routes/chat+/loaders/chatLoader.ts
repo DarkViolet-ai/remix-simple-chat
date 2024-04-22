@@ -23,7 +23,7 @@ export const chatLoader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   const messageHistory = new RedisChatMessageHistory({
-    sessionId: `dv-chat:${sessionId}`,
+    sessionId: `simple-chat:${sessionId}`,
     client: redis,
     url: process.env.REDIS_URL,
   });

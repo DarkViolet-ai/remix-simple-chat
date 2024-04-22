@@ -52,3 +52,9 @@ yarn dev
 ```
 
 Your project should now be running on [http://localhost:3000](http://localhost:3000).
+
+### From darkviolet.ai
+
+If you have any questions, or if you want help in your implementation -- including security, user management, document preparation, and multi-modal implementations -- feel free to contact us at [Dark Violet](https://darkviolet.ai/home#contact).
+
+If you find this useful, make sure to STAR our repository on [GitHub](https://github.com/DarkViolet-ai/remix-simple-chat). Thank You!
