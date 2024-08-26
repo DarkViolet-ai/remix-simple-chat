@@ -20,7 +20,12 @@ import BouncingDots from "~/components/specialty/bouncingDots";
 import ChatTermsOfServiceContent from "./chatTermsOfService";
 
 export type ChatData = {
-  messages: { text: string; timestamp: string; type: "ai" | "human" }[];
+  messages: {
+    text: string;
+    timestamp: string;
+    type: "ai" | "human";
+    name: string;
+  }[];
 };
 
 export default function ChatComponent({ messages }: ChatData) {

@@ -1,6 +1,6 @@
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { ChatLoaderData } from "~/loaders/portalChatLoader";
+import { ChatLoaderData } from "~/lib/loaders/portalChatLoader";
 
 export function usePortalChat({
   portalName,

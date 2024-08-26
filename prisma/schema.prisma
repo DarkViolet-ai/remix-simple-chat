@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String    @unique
+  passwordHash String
+  created      DateTime  @default(now())
+  updated      DateTime  @updatedAt
+  provider     String?
+  lastLogin    DateTime?
+  role         Role      @default(user)
+  imageId      String?
+  imageUrl     String?
+  chats        Chat[]
+}
+
+enum TitleSetOptions {
+  auto
+  locked
+}
+
+model Chat {
+  id         String          @id @default(cuid())
+  createdAt  DateTime        @default(now())
+  lastActive DateTime        @updatedAt
+  user       User?           @relation(fields: [username], references: [name], onDelete: SetNull)
+  username   String?
+  userId     String?
+  title      String?
+  titleSet   TitleSetOptions @default(auto)
+  isPrivate  Boolean         @default(false)
+  messages   ChatMessage[]
+  entity     Entity?         @relation(fields: [entityId], references: [id], onDelete: SetNull)
+  entityId   String?         @unique
+}
+
+enum ChatRole {
+  assistant
+  user
+  system
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  name      String?
+  role      ChatRole @default(user)
+  content   String
+  createdAt DateTime @default(now())
+}
+
+enum NodeMessageType {
+  output
+  feedback
+}
+
+model NodeMessage {
+  id          String          @id @default(cuid())
+  nodeId      String
+  node        entityNode      @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  content     String
+  messageType NodeMessageType
+  createdAt   DateTime        @default(now())
+}
+
+model Entity {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  chat        Chat?
+  nodes       entityNode[]
+  edges       entityEdge[]
+}
+
+model entityNode {
+  id                    String        @id
+  systemPrompt          String?
+  lastFeedbackTimestamp DateTime?
+  lastOutputTimestamp   DateTime?
+  entity                Entity        @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  entityId              String
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  sources               entityEdge[]  @relation(name: "source")
+  targets               entityEdge[]  @relation(name: "target")
+  messages              NodeMessage[]
+}
+
+model entityEdge {
+  id               String     @id @default(cuid())
+  entity           Entity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  entityId         String
+  source           entityNode @relation(name: "source", fields: [sourceId], references: [id], onDelete: Cascade)
+  sourceId         String
+  target           entityNode @relation(name: "target", fields: [targetId], references: [id], onDelete: Cascade)
+  targetId         String
+  connectionPrompt String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}

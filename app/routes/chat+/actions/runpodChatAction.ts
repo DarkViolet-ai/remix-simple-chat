@@ -16,6 +16,8 @@ import {
   setSessionIdOnResponse,
 } from "~/lib/server-utils/session";
 import { v4 as uuid } from "uuid";
+import { OpenAI } from "openai";
+import { addMessage, getMessages, Message } from "~/lib/data/messages";
 
 export const chatAction = async ({ request }: ActionFunctionArgs) => {
   const sessionId = (await getSessionIdFromRequest(request)) || uuid();
@@ -41,48 +43,51 @@ export const chatAction = async ({ request }: ActionFunctionArgs) => {
   //   //modelName: "meta-llama/Meta-Llama-3-70B-Instruct", // deepinfra,
   // });
 
-  const chatModel = new ChatOpenAI({
+  console.log("RUNPOD_API_KEY:", process.env.RUNPOD_API_KEY);
+  console.log("RUNPOD_BASE_URL:", process.env.RUNPOD_BASE_URL);
+
+  const openai = new OpenAI({
     apiKey: process.env.RUNPOD_API_KEY,
-    configuration: {
-      baseURL: process.env.RUNPOD_BASE_URL,
-    },
-    temperature: 0.8,
+    baseURL: process.env.RUNPOD_BASE_URL,
   });
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      "system",
-      `You are a helpful assistant, having a conversation with a user. You can help the user with a variety of tasks, such as answering questions, providing information, or assisting with tasks. You are friendly, polite, and professional. You are knowledgeable and can provide accurate information. You are patient and understanding, and you can help the user with any questions or concerns they may have. You are here to help the user and provide them with the information they need.`,
-    ],
-    new MessagesPlaceholder("chat"),
-  ]);
+  const systemPrompt =
+    "You are a helpful assistant, having a conversation with a user. You can help the user with a variety of tasks, such as answering questions, providing information, or assisting with tasks. You are friendly, polite, and professional. You are knowledgeable and can provide accurate information. You are patient and understanding, and you can help the user with any questions or concerns they may have. You are here to help the user and provide them with the information they need.";
 
-  const messageHistory = new RedisChatMessageHistory({
-    sessionId: `simple-chat:${sessionId}`,
-    client: redis,
-    url: process.env.REDIS_URL,
-  });
   const formData = await request.formData();
   const chatInput = formData.get("chatInput");
 
-  const chatMessage = new HumanMessage(chatInput as string, {
+  const chatMessage = {
+    role: "user",
+    name: "user",
+    content: chatInput as string,
     timestamp: new Date().toISOString(),
+  } as Message;
+
+  await addMessage(sessionId, chatMessage);
+  const messages = await getMessages(sessionId);
+  console.log("messages", messages);
+  const result = await openai.chat.completions.create({
+    temperature: 0.8,
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt,
+      },
+      ...messages,
+    ],
+    model: "Qwen/Qwen2-Math-7B-Instruct",
   });
-
-  const outputParser = new StringOutputParser();
-  await messageHistory.addMessage(chatMessage);
-  const messages = await messageHistory.getMessages();
-
-  const response = await prompt
-    .pipe(chatModel)
-    .pipe(outputParser)
-    .invoke({ chat: messages });
-
-  await messageHistory.addMessage(
-    new AIMessage(response, { timestamp: new Date().toISOString() })
+  console.log("result", result);
+  //console.log("reponse", result.choices[0].message.content);
+  await addMessage(sessionId, {
+    role: "assistant",
+    name: "assistant",
+    content: result.choices[0].message.content,
+    timestamp: new Date().toISOString(),
+  } as Message);
+  return await setSessionIdOnResponse(
+    new Response(result.choices[0].message.content),
+    sessionId
   );
-
-  console.log("reponse", response);
-  const responseJson = json({ response });
-  return await setSessionIdOnResponse(responseJson, sessionId);
 };

@@ -40,7 +40,7 @@ export const portalChatAction = async ({
     //modelName: "DeepInfra/pygmalion-13b-4bit-128g", // deepinfra
     //modelName: "lizpreciatior/lzlv_70b_fp16_hf", // deepinfra
     //modelName: "cognitivecomputations/dolphin-2.6-mixtral-8x7b", // deepinfra
-    modelName: "meta-llama/Meta-Llama-3-70B-Instruct", // deepinfra,
+    modelName: "meta-llama/meta-Llama-3-70B-Instruct", // deepinfra,
   });
 
   const prompt = ChatPromptTemplate.fromMessages([
