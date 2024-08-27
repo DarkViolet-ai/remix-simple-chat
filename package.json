@@ -34,6 +34,7 @@
     "react-spring": "^9.7.3",
     "redis": "^4.6.13",
     "remix-flat-routes": "^0.6.4",
+    "remix-typedjson": "^0.4.1",
     "remix-utils": "^7.5.0",
     "use-spring": "^0.2.4"
   },

@@ -21,6 +21,7 @@ export const chatSchema = z.object({
   id: z.string().optional(),
   username: z.string().optional(),
   entityId: z.string().optional(),
+  agentId: z.string().optional(),
   title: z.string().optional(),
   titleSet: z.enum(["auto", "locked"]).optional(),
   isPrivate: z.boolean().optional(),
@@ -30,7 +31,6 @@ export const chatSchema = z.object({
 });
 
 export const createChatSchema = chatSchema.omit({
-  id: true,
   createdAt: true,
   lastActive: true,
   messages: true,

@@ -32,6 +32,7 @@ import {
   UpdateUserInput,
 } from "./userSchema.server";
 import bcrypt from "bcryptjs";
+import { CreateAgentInput, UpdateAgentInput } from "./agentSchema.server";
 
 export const createChatMessage = async (
   chatMessage: CreateChatMessageInput
@@ -315,4 +316,25 @@ export const deleteUser = async (userId: string) => {
   return await prisma.user.delete({
     where: { id: userId },
   });
+};
+
+export const createAgent = async (agent: CreateAgentInput) => {
+  return await prisma.agent.create({
+    data: agent,
+  });
+};
+
+export const getAgent = async (agentName: string) => {
+  return await prisma.agent.findUnique({ where: { name: agentName } });
+};
+
+export const updateAgent = async (agent: UpdateAgentInput) => {
+  return await prisma.agent.update({
+    where: { id: agent.id },
+    data: agent,
+  });
+};
+
+export const deleteAgent = async (agentName: string) => {
+  return await prisma.agent.delete({ where: { name: agentName } });
 };
