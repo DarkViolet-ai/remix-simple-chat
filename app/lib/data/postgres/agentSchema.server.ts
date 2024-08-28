@@ -4,6 +4,7 @@ import { chatSchema } from "./chatSchema.server";
 export const agentSchema = z.object({
   id: z.string().optional(),
   name: z.string(),
+  model: z.string(),
   systemPrompt: z.string(),
   tools: z.array(z.string()).optional().nullable(),
   createdAt: z.date().optional(),

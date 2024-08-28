@@ -23,6 +23,7 @@ import {
   getChat,
   createChat,
   createChatMessage,
+  getAgent,
 } from "~/lib/data/postgres/dbApi.server";
 import { CreateChatMessageInput } from "~/lib/data/postgres/chatMessageSchema.server";
 import { apiReturn } from "~/utils/apiReturn";
@@ -31,10 +32,9 @@ import { entityEvents } from "~/lib/server-utils/events.server";
 
 const chatInputSchema = z.object({
   chatId: z.string(),
-  chatInput: z.string(),
-  agentName: z.string(),
-  username: z.string(),
-  systemPrompt: z.string(),
+  chatInput: z.string().optional(),
+  agentName: z.string().optional(),
+  username: z.string().optional(),
 });
 
 export type ChatInput = z.infer<typeof chatInputSchema>;
@@ -42,17 +42,9 @@ export type ChatInput = z.infer<typeof chatInputSchema>;
 export const action = async ({ request }: ActionFunctionArgs) => {
   const _agentChat = async () => {
     const formData = await request.formData();
-    const { chatId, chatInput, agentName, username, systemPrompt } =
-      chatInputSchema.parse(Object.fromEntries(formData));
-
-    const openai = new OpenAI({
-      apiKey: process.env.OPENROUTER_API_KEY,
-      baseURL: process.env.OPENROUTER_BASE_URL,
-      defaultHeaders: {
-        "HTTP-Referer": "https://darkviolet.ai",
-        "X-Title": "Dark Violet",
-      },
-    });
+    const { chatId, chatInput, agentName, username } = chatInputSchema.parse(
+      Object.fromEntries(formData)
+    );
 
     if (chatInput && chatInput.length !== 0) {
       // we might not have chat input if it is just agents talking to each other
@@ -64,6 +56,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       } as CreateChatMessageInput;
 
       await createChatMessage(chatMessage);
+      entityEvents.newEntityOutput(chatId).emit();
+      // if there is chat input, we notify all client agents that the chat has been updated
+      return await getChat(chatId);
+    }
+    const openai = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: process.env.OPENROUTER_BASE_URL,
+      defaultHeaders: {
+        "HTTP-Referer": "https://darkviolet.ai",
+        "X-Title": "Dark Violet",
+      },
+    });
+
+    const agent = agentName ? await getAgent(agentName) : null;
+    if (!agent) {
+      throw new Error("Agent not found");
     }
 
     const _chat = await getChat(chatId);
@@ -78,7 +86,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       messages: [
         {
           role: "system",
-          content: systemPrompt,
+          content: agent.systemPrompt!,
         },
         ...messages,
       ],

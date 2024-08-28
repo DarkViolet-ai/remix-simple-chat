@@ -126,7 +126,8 @@ model entityEdge {
 model agent {
   id           String   @id @default(cuid())
   name         String   @unique
-  systemPrompt String?
+  model        String
+  systemPrompt String
   tools        Json?
   chats        Chat[]
   createdAt    DateTime @default(now())
