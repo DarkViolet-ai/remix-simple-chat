@@ -26,15 +26,21 @@ export const useAgent = (name?: string) => {
     }
   }, [name, fetcher.state, revalidate, fetcher.data]);
 
-  const updateAgent = (agent: CreateAgentInput) => {
-    fetcher.submit(
-      { agent },
-      { method: "POST", action: `/api/agent/${agent.name}` }
-    );
+  const updateAgent = (agent: CreateAgentInput | FormData) => {
+    let agentName: string;
+    if (agent instanceof FormData) {
+      agentName = agent.get("name") as string;
+    } else {
+      agentName = agent.name;
+    }
+    fetcher.submit(agent, {
+      method: "POST",
+      action: `/api/agent/${agentName}`,
+    });
   };
 
-  const createAgent = (agent: UpdateAgentInput) => {
-    fetcher.submit({ agent }, { method: "POST", action: "/api/agent/new" });
+  const createAgent = (agent: UpdateAgentInput | FormData) => {
+    fetcher.submit(agent, { method: "POST", action: "/api/agent/new" });
   };
 
   return {

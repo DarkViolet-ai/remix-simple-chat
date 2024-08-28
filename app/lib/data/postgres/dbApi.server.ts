@@ -338,3 +338,7 @@ export const updateAgent = async (agent: UpdateAgentInput) => {
 export const deleteAgent = async (agentName: string) => {
   return await prisma.agent.delete({ where: { name: agentName } });
 };
+
+export const getAgents = async () => {
+  return await prisma.agent.findMany();
+};
