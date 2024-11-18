@@ -1,75 +1,59 @@
-import { TogetherAIEmbeddings } from "@langchain/community/embeddings/togetherai";
-import { Document } from "@langchain/core/documents";
 import { persona01 as dvPersonaBase } from "./dvPersonaBase.json";
-import { PineconeStore } from "@langchain/pinecone";
 import { pinecone } from "./pineconeDb.server";
+import Together from "together-ai";
 type PersonaEntry = { question: string; answer: string };
 type Persona = PersonaEntry[];
-
-export const darkVioletRetrieval = async (query: string) => {
-  const vectorStore = await initializeDarkVioletRetrieval();
-  console.log("running query on vector store");
-  const results = await vectorStore.similaritySearchWithScore(query, 5);
-  console.log("retrieval results", results);
-  return results
-    .map(([result, score]) => ({
-      question: result.pageContent,
-      answer: result.metadata.answer,
-      score,
-    }))
-    .filter((result) => result.score > 0.65);
-};
 
 export const initializeDarkVioletRetrieval = async () => {
   const index = pinecone.index("darkviolet");
   const namespace = "persona-base";
   const indexStats = await index.describeIndexStats();
+  console.log("index stats", indexStats);
   const namespaces = indexStats.namespaces;
+  const together = new Together({
+    apiKey: process.env.TOGETHER_AI_API_KEY,
+  });
+
   if (!namespaces || !Object.keys(namespaces).includes(namespace)) {
-    const personaDocs = (dvPersonaBase as Persona).map(
-      (entry) =>
-        new Document({
-          pageContent: entry.question,
-          metadata: { answer: entry.answer },
-        })
+    const embeddings = await Promise.all(
+      (dvPersonaBase as Persona).map(async (entry, index) => {
+        const response = await together.embeddings.create({
+          model: "WhereIsAI/UAE-Large-V1",
+          input: entry.question,
+        });
+        return {
+          id: index.toString(),
+          values: response.data[0].embedding,
+          metadata: { answer: entry.answer, text: entry.question },
+        };
+      })
     );
-
-    const vectorStore = new PineconeStore(
-      new TogetherAIEmbeddings({
-        modelName: "WhereIsAI/UAE-Large-V1",
-      }),
-      {
-        pineconeIndex: index,
-        namespace,
-      }
-    );
-    const sliceSize = 5;
-
-    for (
-      let startIndex = 0;
-      startIndex < personaDocs.length;
-      startIndex += sliceSize
-    ) {
-      console.log("creating index slice", startIndex);
-      await vectorStore.addDocuments(
-        personaDocs.slice(startIndex, startIndex + sliceSize),
-        {
-          // ids will be an array of sliceSize numbers starting from startIndex
-          ids: Array.from({ length: sliceSize }, (_, i) => startIndex + i).map(
-            (i) => i.toString()
-          ),
-        }
-      );
-    }
-    return vectorStore;
+    await index.upsert(embeddings);
   }
-  return new PineconeStore(
-    new TogetherAIEmbeddings({
-      modelName: "WhereIsAI/UAE-Large-V1",
-    }),
-    {
-      pineconeIndex: index,
-      namespace,
-    }
-  );
+  return index;
+};
+
+export const darkVioletRetrieval = async (query: string, minScore = 0.65) => {
+  let index = await initializeDarkVioletRetrieval();
+  console.log("namespace", await index.describeIndexStats());
+  const together = new Together({
+    apiKey: process.env.TOGETHER_AI_API_KEY,
+  });
+  const embedding = await together.embeddings.create({
+    model: "WhereIsAI/UAE-Large-V1",
+    input: query,
+  });
+  const results = await index.namespace("persona-base").query({
+    vector: embedding.data[0].embedding,
+    topK: 5,
+    includeMetadata: true,
+  });
+  console.log("retrieval results", results);
+  return results.matches
+    .map((result) => ({
+      question: result.metadata?.text,
+      answer: result.metadata?.answer,
+      score: result.score,
+    }))
+    .filter((result) => result.score && result.score > minScore);
 };
