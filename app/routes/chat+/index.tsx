@@ -11,7 +11,7 @@ export const action = chatAction;
 export default function Chat() {
   const { messages } = useLoaderData<ChatLoaderData>();
   return (
-    <Flex className="w-[45vw] hidden xl:flex items-center">
+    <Flex className="w-[45vw] xl:flex items-center">
       <ChatComponent messages={messages} />
     </Flex>
   );
