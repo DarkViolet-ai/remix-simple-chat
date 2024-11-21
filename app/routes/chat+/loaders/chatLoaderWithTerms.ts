@@ -7,6 +7,8 @@ import {
   setSessionIdOnResponse,
 } from "~/lib/server-utils/session";
 import { v4 as uuid } from "uuid";
+import { addMessageToHistory } from "~/lib/server-utils/textGen.server";
+import { getMessageHistory } from "~/lib/server-utils/textGen.server";
 
 type TermsAcceptance = {
   accepted: boolean;
@@ -58,40 +60,38 @@ export const chatLoader = async ({ request }: LoaderFunctionArgs) => {
 
   console.log("session id", sessionId);
   console.log("accepted terms", acceptedTerms);
+
   const messageHistory = new RedisChatMessageHistory({
     sessionId: `simple-chat:${sessionId}`,
     client: redis,
     url: process.env.REDIS_URL,
   });
 
-  //await messageHistory.addMessage(new AIMessage("Hello!"));
-  let messages = await messageHistory.getMessages();
+  let messages = await getMessageHistory(sessionId);
   if (messages.length === 0) {
-    messageHistory.addMessage(
-      new AIMessage(
-        "Hello! I'm Dark Violet.  What can I help you with today?",
-        { timestamp: new Date().toISOString() }
-      )
-    );
-    messages = await messageHistory.getMessages();
+    await addMessageToHistory(sessionId, {
+      role: "assistant",
+      name: "DarkViolet",
+      content: "Hello! I'm Dark Violet.  What can I help you with today?",
+      timestamp: new Date().toISOString(),
+    });
+    messages = await getMessageHistory(sessionId);
   }
-  //console.log(messages);
   const response = json({
     messages: messages.map((message) =>
-      message instanceof AIMessage
+      message.name === "DarkViolet"
         ? {
             type: "ai",
             text: message.content,
-            timestamp: message.additional_kwargs.timestamp,
+            timestamp: message.timestamp,
           }
         : {
             type: "human",
             text: message.content,
-            timestamp: message.additional_kwargs.timestamp,
+            timestamp: message.timestamp,
           }
     ),
     acceptedTerms,
-    recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
   });
   return await setSessionIdOnResponse(response, sessionId);
 };
