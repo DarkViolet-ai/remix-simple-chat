@@ -7,6 +7,10 @@ import {
   setSessionIdOnResponse,
 } from "~/lib/server-utils/session";
 import { v4 as uuid } from "uuid";
+import {
+  addMessageToHistory,
+  getMessageHistory,
+} from "../server-utils/textGen.server";
 
 export const portalChatLoader = async ({
   request,
@@ -27,28 +31,35 @@ export const portalChatLoader = async ({
   }
 
   const messageHistory = new RedisChatMessageHistory({
-    sessionId: `dv-chat:${sessionId}:portal:${portalName}`,
+    sessionId: `simple-chat:${sessionId}`,
     client: redis,
     url: process.env.REDIS_URL,
   });
 
   //await messageHistory.addMessage(new AIMessage("Hello!"));
-  let messages = await messageHistory.getMessages();
+  let messages = await getMessageHistory(sessionId);
+  if (messages.length === 0) {
+    await addMessageToHistory(sessionId, {
+      role: "assistant",
+      name: "DarkViolet",
+      content: "Hello! I'm Dark Violet.  What can I help you with today?",
+      timestamp: new Date().toISOString(),
+    });
+    messages = await getMessageHistory(sessionId);
+  }
   //console.log(messages);
   const response = json({
     messages: messages.map((message) =>
-      message instanceof AIMessage
+      message.name === "DarkViolet"
         ? {
             type: "ai",
             text: message.content,
-            timestamp: message.additional_kwargs.timestamp,
-            name: portalName,
+            timestamp: message.timestamp,
           }
         : {
             type: "human",
             text: message.content,
-            timestamp: message.additional_kwargs.timestamp,
-            name: "user",
+            timestamp: message.timestamp,
           }
     ),
   });
